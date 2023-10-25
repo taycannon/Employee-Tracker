@@ -49,13 +49,13 @@ function questions() {
     .then((answers) => {
       switch (answers.options) {
         case 'View All Departments':
-          viewEmployess();
+          viewDepartments();
           break;
         case 'Add Department':
          addDepartment();
           break;
         case 'View All Employees':
-          viewEmployess();
+          viewEmployees();
           break;
         case 'Add Employee':
          addEmployees();
@@ -67,6 +67,7 @@ function questions() {
          updateRole();
           break;
         case 'Add Role':
+        addRole();
           addAbortListener();
           break;
         case 'Quit':
@@ -78,3 +79,60 @@ function questions() {
     });
 }
 
+function viewDepartments() {
+    db.query('SELECT name AS Department_Name, id AS Department_ID FROM department', 
+    (err, results) => {
+      if (err) throw err;
+      console.table(results);
+      init();
+    });
+  }
+
+function addDepartment() {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          message: 'Enter the name of the new department:',
+          name: 'name',
+        },
+      ])
+      .then((answer) => {
+        const { name } = answer;
+  
+        // Inserting the new department in the database
+        db.query('INSERT INTO department (name) VALUES (?)', [name], (err, result) => {
+          if (err) {
+            console.error('Error adding department:', err);
+            return;
+          }
+  
+          console.log(`Department "${name}" added successfully with ID ${result.insertId}`);
+          init(); 
+        });
+      });
+  }
+  
+  
+  function viewEmployees() {
+  
+  }
+  
+  function addEmployees() {
+ 
+  }
+  
+  function viewRoles() {
+ 
+  }
+  
+  function updateRole() {
+ 
+  }
+  
+  function addRole() {
+   
+  }
+  
+  questions();
+  
