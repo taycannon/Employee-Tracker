@@ -9,6 +9,7 @@ N/A
 ## Installation
 Install dependencies: npm i inquirer@8.2.4
 npm i mysql2
+express
 
 ## Usage
 
