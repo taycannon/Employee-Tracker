@@ -27,6 +27,7 @@ db.connect((err) => {
 });
 
 // Function for the questions/choices
+// Function for the questions/choices
 function init() {
     inquirer
         .prompt([
@@ -72,8 +73,14 @@ function init() {
                     break;
                 case 'Quit':
                     console.log('Bye!');
-                    db.end();
-                    process.exit();
+                    db.end((err) => {
+                        if (err) {
+                            console.error('Error closing the database connection:', err);
+                        } else {
+                            console.log('Database connection closed.');
+                            process.exit();
+                        }
+                    });
                     break;
             }
         });
@@ -172,85 +179,85 @@ function viewRoles() {
         if (err) throw err;
         console.table(results);
         init();
-      });
+    });
 }
 
 function updateRole() {
     inquirer
-    .prompt([
-      {
-        type: 'input',
-        message: 'Enter the ID of the employee you want to update:',
-        name: 'employee_id',
-      },
-      {
-        type: 'input',
-        message: 'Enter the new role ID for the employee:',
-        name: 'new_role',
-      },
-    ])
-    .then((answers) => {
-      const { employee_id, new_role_id } = answers;
+        .prompt([
+            {
+                type: 'input',
+                message: 'Enter the ID of the employee you want to update:',
+                name: 'employee_id',
+            },
+            {
+                type: 'input',
+                message: 'Enter the new role ID for the employee:',
+                name: 'new_role',
+            },
+        ])
+        .then((answers) => {
+            const { employee_id, new_role_id } = answers;
 
-      // Updating roles in the database
-      db.query(
-        'UPDATE employee SET role_id = ? WHERE id = ?',
-        [new_role_id, employee_id],
-        (err, result) => {
-          if (err) {
-            console.error('Error updating employee role:', err);
-            return;
-          }
+            // Updating roles in the database
+            db.query(
+                'UPDATE employee SET role_id = ? WHERE id = ?',
+                [new_role_id, employee_id],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error updating employee role:', err);
+                        return;
+                    }
 
-          if (result.affectedRows === 0) {
-            console.log('No employee with that ID found.');
-          } else {
-            console.log(`Employee with ID ${employee_id} has been updated to the new role with ID ${new_role_id}`);
-          }
+                    if (result.affectedRows === 0) {
+                        console.log('No employee with that ID found.');
+                    } else {
+                        console.log(`Employee with ID ${employee_id} has been updated to the new role with ID ${new_role_id}`);
+                    }
 
-          init();
-        }
-      );
-    });
+                    init();
+                }
+            );
+        });
 }
 
 function addRole() {
     inquirer
-    .prompt([
-      {
-        type: 'input',
-        message: 'Enter the title of the new role:',
-        name: 'title',
-      },
-      {
-        type: 'input',
-        message: 'Enter the salary for the new role:',
-        name: 'salary',
-      },
-      {
-        type: 'input',
-        message: 'Enter the department ID for the new role:',
-        name: 'department_id',
-      },
-    ])
-    .then((answer) => {
-      const { title, salary, department_id } = answer;
+        .prompt([
+            {
+                type: 'input',
+                message: 'Enter the title of the new role:',
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: 'Enter the salary for the new role:',
+                name: 'salary',
+            },
+            {
+                type: 'input',
+                message: 'Enter the department ID for the new role:',
+                name: 'department_id',
+            },
+        ])
+        .then((answer) => {
+            const { title, salary, department_id } = answer;
 
-      // Inserting the new role in the database
-      db.query(
-        'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',
-        [title, salary, department_id],
-        (err, result) => {
-          if (err) {
-            console.error('Error adding role:', err);
-            return;
-          }
+            // Inserting the new role in the database
+            db.query(
+                'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',
+                [title, salary, department_id],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error adding role:', err);
+                        return;
+                    }
 
-          console.log(`Role "${title}" added successfully with ID ${result.insertId}`);
-          init();
-        }
-      );
-    });
+                    console.log(`Role "${title}" added successfully with ID ${result.insertId}`);
+                    init();
+                }
+            );
+        });
 }
 
 init();
