@@ -27,7 +27,7 @@ db.connect((err) => {
 });
 
 // Function for the questions/choices
-function questions() {
+function init() {
     inquirer
         .prompt([
             {
@@ -253,4 +253,4 @@ function addRole() {
     });
 }
 
-questions();
+init();
